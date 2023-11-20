@@ -51,7 +51,7 @@ describe("GET /api/topics", () => {
     });
 })
 
-describe.only("GET /api", () => {
+describe("GET /api", () => {
     test("200: Get the correct status code", () => {
         return request(app).get("/api").expect(200);
     })
