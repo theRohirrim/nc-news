@@ -140,4 +140,49 @@ describe("GET /api", () => {
         });
     });
 })
+
+describe("GET /api/articles", () => {
+    test("200: Returned array has the right number of items", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((res) => {
+            expect(Array.isArray(res.body.articles)).toBe(true);
+            expect(res.body.articles.length).toBe(13)
+        });
+    });
+
+    test("200: Returned array has the right properties (and doesn't include body property)", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((res) => {
+            const articlesArray = res.body.articles
+            articlesArray.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    author: expect.any(String),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(String),
+                })
+                expect(article).not.toHaveProperty('body')
+            })
+        })
+    })
+
+    test("200: Ordered by date in descending order", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles).toBeSortedBy("created_at", {
+                descending: true,
+              });
+        })
+    })
+});
 })
