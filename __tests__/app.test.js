@@ -50,3 +50,40 @@ describe("GET /api/topics", () => {
         });
     });
 })
+
+describe.only("GET /api", () => {
+    test("200: Get the correct status code", () => {
+        return request(app).get("/api").expect(200);
+    })
+
+    test("200: Check returned result is an object", () => {
+        return request(app)
+          .get("/api")
+          .expect(200)
+          .then((res) => {
+            expect(typeof res.body).toBe('object')
+            expect(Array.isArray(res.body.topics)).toBe(false);
+        });
+    });
+
+    test("200: Endpoint objects should have correct keys", () => {
+        return request(app)
+          .get("/api")
+          .expect(200)
+          .then((res) => {
+            for (const [key, value] of Object.entries(res.body.endpoints)) {
+                if (key === 'GET /api') {
+                    expect(value).toMatchObject({
+                        description: expect.any(String)
+                    })
+                } else {
+                    expect(value).toMatchObject({
+                        description: expect.any(String),
+                        queries: expect.any(Array),
+                        exampleResponse: expect.any(Object)
+                    })
+                }
+            }
+        });
+    });
+})
