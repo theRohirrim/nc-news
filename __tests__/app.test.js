@@ -53,7 +53,7 @@ describe("GET /api/topics", () => {
     });
 })
 
-describe.only("GET /api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
     test("200: Get the correct status code", () => {
         return request(app).get("/api/articles/1").expect(200);
     })
@@ -83,6 +83,24 @@ describe.only("GET /api/articles/:article_id", () => {
                     votes: 100,
                     article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
             })
+        });
+    });
+
+    test('404: sends an appropriate status and error message when given a valid but non-existent id', () => {
+        return request(app)
+          .get('/api/articles/45012')
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe('article does not exist');
+        });
+    });
+
+    test('400: sends an appropriate status and error message when given an invalid id', () => {
+        return request(app)
+          .get('/api/articles/not-an-article')
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
         });
     });
 })
