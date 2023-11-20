@@ -3,7 +3,9 @@ const app = require("../app");
 const db = require("../db/connection");
 
 const seed = require("../db/seeds/seed");
-const data = require("../db/data/test-data")
+const data = require("../db/data/test-data");
+
+const {convertTimestampToDate} = require("../db/seeds/utils")
 
 beforeEach(() => {
     return seed(data);
@@ -51,20 +53,71 @@ describe("GET /api/topics", () => {
     });
 })
 
+describe("GET /api/articles/:article_id", () => {
+    test("200: Get the correct status code", () => {
+        return request(app).get("/api/articles/1").expect(200);
+    })
+
+    test("200: Check returned result is an object", () => {
+        return request(app)
+          .get("/api/articles/1")
+          .expect(200)
+          .then((res) => {
+            expect(Array.isArray(res.body.article)).toBe(false);
+            expect(typeof res.body).toBe('object');
+        });
+    });
+
+    test("200: Returned results keys and values are correct", () => {
+        return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then((res) => {
+                expect(res.body.article).toMatchObject({
+                    article_id: 1,
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: convertTimestampToDate(1594329060000),
+                    votes: 100,
+                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+            })
+        });
+    });
+
+    test('404: sends an appropriate status and error message when given a valid but non-existent id', () => {
+        return request(app)
+          .get('/api/articles/45012')
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe('article does not exist');
+        });
+    });
+
+    test('400: sends an appropriate status and error message when given an invalid id', () => {
+        return request(app)
+          .get('/api/articles/not-an-article')
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        });
+    });
+    
 describe("GET /api", () => {
     test("200: Get the correct status code", () => {
         return request(app).get("/api").expect(200);
     })
 
-    test("200: Check returned result is an object", () => {
+    test("200: Returned item is an object", () => {
         return request(app)
-          .get("/api")
-          .expect(200)
-          .then((res) => {
-            expect(typeof res.body).toBe('object')
-            expect(Array.isArray(res.body.topics)).toBe(false);
-        });
-    });
+        .get("/api")
+        .expect(200)
+        .then((res) => {
+          expect(typeof res.body).toBe('object')
+          expect(Array.isArray(res.body.topics)).toBe(false);
+        })
+    })
 
     test("200: Endpoint objects should have correct keys", () => {
         return request(app)
@@ -86,4 +139,5 @@ describe("GET /api", () => {
             }
         });
     });
+})
 })
