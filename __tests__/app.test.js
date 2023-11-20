@@ -103,7 +103,8 @@ describe("GET /api/articles/:article_id", () => {
             expect(response.body.msg).toBe('Bad request');
         });
     });
-    
+})
+
 describe("GET /api", () => {
     test("200: Get the correct status code", () => {
         return request(app).get("/api").expect(200);
@@ -140,4 +141,61 @@ describe("GET /api", () => {
         });
     });
 })
+
+describe("GET /api/articles/:article_id/comments", () => {
+    test("200: Returned set of comments should be in an array", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((res) => {
+            expect(Array.isArray(res.body.comments)).toBe(true);
+        });
+    })
+
+    test("200: Comments should have correct properties", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((res) => {
+            res.body.comments.forEach((comment) => {
+                expect(comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    article_id: expect.any(Number),
+                })
+            })
+        });
+    })
+
+    test("200: Comments should be ordered by most recent comments first", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((res) => {
+            expect(res.body.comments).toBeSortedBy('created_at', {
+                descending: true,
+              });
+        });
+    })
+
+    test('404: sends an appropriate status and error message when given a valid but non-existent id', () => {
+        return request(app)
+          .get('/api/articles/45012/comments')
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe('there are no comments for this article');
+        });
+    });
+
+    test('400: sends an appropriate status and error message when given an invalid id', () => {
+        return request(app)
+          .get('/api/articles/not-an-article')
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        });
+    });
 })

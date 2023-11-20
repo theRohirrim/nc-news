@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTopics, getArticleById, getEndpoints } = require("./connectors/topics.connector");
+const { getTopics, getArticleById, getEndpoints, getCommentsByArticleId } = require("./connectors/topics.controller");
 const { handlePsqlError, handleCustomError, handleServerError } = require("./errors");
 
 const app = express();
@@ -7,6 +7,8 @@ const app = express();
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticleById);
+
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
 
 app.get("/api", getEndpoints);
 
