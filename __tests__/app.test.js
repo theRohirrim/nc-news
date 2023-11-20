@@ -89,21 +89,12 @@ describe("GET /api", () => {
 })
 
 describe("GET /api/articles", () => {
-    test("200: Returned items are in an array", () => {
-        return request(app)
-          .get("/api/articles")
-          .expect(200)
-          .then((res) => {
-            expect(Array.isArray(res.body.articles)).toBe(true);
-        });
-    });
-
     test("200: Returned array has the right number of items", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)
           .then((res) => {
-            console.log(res.body.articles);
+            expect(Array.isArray(res.body.articles)).toBe(true);
             expect(res.body.articles.length).toBe(13)
         });
     });
