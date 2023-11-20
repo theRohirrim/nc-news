@@ -49,8 +49,4 @@ describe("GET /api/topics", () => {
             expect(res.body.topics.length).toBe(3);
         });
     });
-
-    /* Sad path tests cannot be reasonably mocked until queries
-    are introduced as a bad request at this point cannot activate
-    the endpoint */
 })
