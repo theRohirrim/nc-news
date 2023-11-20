@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTopics, getEndpoints, getArticles } = require("./controllers/topics.controller");
+const { getTopics, getEndpoints, getArticles, getArticleById } = require("./controllers/topics.controller");
 const { handlePsqlError, handleCustomError, handleServerError } = require("./errors");
 
 const app = express();
