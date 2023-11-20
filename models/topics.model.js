@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const fs = require("fs/promises")
 
 exports.selectTopics = () => {
     return db.query(`SELECT * FROM topics;`)
@@ -14,5 +15,12 @@ exports.selectArticleById = (article_id) => {
             return Promise.reject({status: 404, msg: "article does not exist"})
           }
         return rows[0]
+    })
+}
+
+exports.selectEndpoints = () => {
+    return fs.readFile(`${__dirname}/../endpoints.json`)
+    .then((res) => {
+        return JSON.parse(res)
     })
 }
