@@ -103,7 +103,8 @@ describe("GET /api/articles/:article_id", () => {
             expect(response.body.msg).toBe('Bad request');
         });
     });
-    
+})
+
 describe("GET /api", () => {
     test("200: Get the correct status code", () => {
         return request(app).get("/api").expect(200);
@@ -185,4 +186,28 @@ describe("GET /api/articles", () => {
         })
     })
 });
+
+describe("POST: /api/articles/:article_id/comments", () => {
+    test("201: Posts a new comment successfully", () => {
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+            username: "rogersop",
+            body: "I think it could have been worse"
+        })
+        .expect(201)
+        .then((response) => {
+        expect(response.body.comment).toMatchObject({
+            article_id: 1,
+            author: "rogersop",
+            body: "I think it could have been worse",
+            comment_id: 19,
+            created_at: expect.any(String),
+            votes: 0,
+        });
+    });
+    });
+    // TODO Refuses foregin key constraint (article_id and user)
+    // TODO Refuses based on a bad request (not a valid article_id)
+    // TODO Refuses based on a valid but non existing article_id
 })
