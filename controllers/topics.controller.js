@@ -36,7 +36,6 @@ exports.getArticles = (req, res, next) => {
 exports.postCommentByArticleId = (req, res, next) => {
     const {article_id} = req.params;
     const {body, username} = req.body
-    console.log(article_id, body, username)
     return insertCommentByArticleId(article_id, body, username)
     .then(({ rows }) => {
         res.status(201).send({ comment: rows[0] });

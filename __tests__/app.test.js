@@ -187,8 +187,8 @@ describe("GET /api/articles", () => {
     })
 });
 
-describe("POST: /api/articles/:article_id/comments", () => {
-    test("201: Posts a new comment successfully", () => {
+describe.only("POST: /api/articles/:article_id/comments", () => {
+    test("201: Posts a new comment successfully with correct properties and values", () => {
         return request(app)
         .post("/api/articles/1/comments")
         .send({
@@ -207,7 +207,33 @@ describe("POST: /api/articles/:article_id/comments", () => {
         });
     });
     });
-    // TODO Refuses foregin key constraint (article_id and user)
-    // TODO Refuses based on a bad request (not a valid article_id)
-    // TODO Refuses based on a valid but non existing article_id
+
+    test("400: Rejects based on a bad request (article_id)", () => {
+        return request(app)
+        .post("/api/articles/not_article/comments")
+        .send({
+            username: "rogersop",
+            body: "I think it could have been worse"
+        })
+        .expect(400)
+    });
+
+    test("400: Rejects based on missing NOT NULL key (username)", () => {
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+            body: "I think it could have been worse"
+        })
+        .expect(400)
+    });
+
+    // test("404: Rejects based on a valid but non existing article_id)", () => {
+    //     return request(app)
+    //     .post("/api/articles/5555/comments")
+    //     .send({
+    //         username: "rogersop",
+    //         body: "I think it could have been worse"
+    //     })
+    //     .expect(404)
+    // });
 })
