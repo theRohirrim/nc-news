@@ -13,7 +13,7 @@ exports.selectArticleById = (article_id) => {
     .then(({rows}) => {
         if (rows.length === 0) {
             return Promise.reject({status: 404, msg: "article does not exist"})
-          }
+        }
         return rows[0]
     })
 }
@@ -45,4 +45,11 @@ exports.selectAllArticles = () => {
     .then(({rows}) => {
         return rows
     })
+}
+
+exports.insertCommentByArticleId = (article_id, body, username) => {
+    return db.query(`INSERT INTO comments
+    (body, article_id, author)
+    VALUES ($1, $2, $3)
+    RETURNING *;`, [body, article_id, username])
 }
