@@ -143,20 +143,12 @@ describe("GET /api", () => {
 })
 
 describe("GET /api/articles/:article_id/comments", () => {
-    test("200: Returned set of comments should be in an array", () => {
+    test("200: Comments should be an array of correct length and have correct properties", () => {
         return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
         .then((res) => {
-            expect(Array.isArray(res.body.comments)).toBe(true);
-        });
-    })
-
-    test("200: Comments should have correct properties", () => {
-        return request(app)
-        .get("/api/articles/1/comments")
-        .expect(200)
-        .then((res) => {
+            expect(res.body.comments.length).toBe(11)
             res.body.comments.forEach((comment) => {
                 expect(comment).toMatchObject({
                     comment_id: expect.any(Number),
@@ -181,12 +173,21 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
     })
 
+    test("200: No comments present, return an empty array", () => {
+        return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then((res) => {
+            expect(res.body.comments).toEqual([]);
+        });
+    })
+
     test('404: sends an appropriate status and error message when given a valid but non-existent id', () => {
         return request(app)
           .get('/api/articles/45012/comments')
           .expect(404)
           .then((response) => {
-            expect(response.body.msg).toBe('there are no comments for this article');
+            expect(response.body.msg).toBe('resource not found');
         });
     });
 
