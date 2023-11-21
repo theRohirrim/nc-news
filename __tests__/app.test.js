@@ -307,20 +307,10 @@ describe("POST: /api/articles/:article_id/comments", () => {
 })
 
 describe("DELETE /api/comments/:comment_id", () => {
-    test("200: Successfully deletes comment and returns deleted comment", () => {
+    test("204: Successfully deletes comment and returns no content", () => {
         return request(app)
         .delete('/api/comments/1')
-        .expect(200)
-        .then((res) => {
-            expect(res.body.comment).toMatchObject({
-                comment_id: 1,
-                body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-                article_id: 9,
-                author: "butter_bridge",
-                votes: 16,
-                created_at: "2020-04-06T12:17:00.000Z"
-            })
-        })   
+        .expect(204)
     })
 
     test("400: Rejects based on an invalid comment_id", () => {

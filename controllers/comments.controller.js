@@ -7,8 +7,8 @@ exports.deleteCommentById = (req, res, next) => {
     .then(() => {
         return removeCommentById(comment_id)
     })
-    .then((comments) => {
-        res.status(200).send({comment: comments[0]})
+    .then(() => {
+        res.status(204).send()
     })
     .catch(next)
 }
