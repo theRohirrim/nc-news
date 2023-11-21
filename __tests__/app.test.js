@@ -322,4 +322,22 @@ describe("DELETE /api/comments/:comment_id", () => {
             })
         })   
     })
+
+    test("400: Rejects based on an invalid comment_id", () => {
+        return request(app)
+        .delete('/api/comments/string')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad request')
+        })   
+    })
+
+    test("404: Rejects based on a valid but non existing comment_id", () => {
+        return request(app)
+        .delete('/api/comments/9999')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('resource not found')
+        })   
+    })
 })
