@@ -43,7 +43,7 @@
         }
     }
   },
-  "GET /api/articles/:article_id/comments": {
+  "POST /api/articles/:article_id/comments": {
     "description": "post a comment related to a specific article",
     "queries": [],
     "exampleResponse": {
