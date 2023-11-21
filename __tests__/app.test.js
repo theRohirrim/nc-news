@@ -275,6 +275,9 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
     });
 
     test("400: Rejects based on missing NOT NULL key (username)", () => {
@@ -284,6 +287,9 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
     });
 
     test("404: Rejects based on a valid but non existing article_id)", () => {
@@ -294,6 +300,9 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('resource not found');
+        })
     });
 })
 
@@ -313,4 +322,122 @@ describe("GET /api/users", () => {
             })
         })
     })
+})
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204: Successfully deletes comment and returns no content", () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+    })
+
+    test("400: Rejects based on an invalid comment_id", () => {
+        return request(app)
+        .delete('/api/comments/string')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad request')
+        })   
+    })
+
+    test("404: Rejects based on a valid but non existing comment_id", () => {
+        return request(app)
+        .delete('/api/comments/9999')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('resource not found')
+        })   
+    })
+})
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("200: Successful patch will return the article", () => {
+        return request(app)
+        .patch('/api/articles/1')
+        .send({
+            inc_votes: 5
+        })
+        .expect(200)
+        .then((res) => {
+            expect(res.body.article).toMatchObject({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: convertTimestampToDate(1594329060000),
+                votes: 105,
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+            })
+        })
+    })
+
+    test("200: Successful patch will return the article", () => {
+        return request(app)
+        .patch('/api/articles/1')
+        .send({
+            inc_votes: -50
+        })
+        .expect(200)
+        .then((res) => {
+            expect(res.body.article).toMatchObject({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: convertTimestampToDate(1594329060000),
+                votes: 50,
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+            })
+        })
+    })
+
+    test("400: Rejects based on a bad request (article_id)", () => {
+        return request(app)
+        .patch("/api/articles/not_article")
+        .send({
+            inc_votes: 5
+        })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
+    });
+
+    test("404: Rejects based on a valid but non existing article_id", () => {
+        return request(app)
+        .patch("/api/articles/5555")
+        .send({
+            inc_votes: 5
+        })
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('resource not found');
+        })
+    });
+
+    test("400: Rejects based on a invalid request body (wrong property)", () => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({
+            in_vot: 5 
+        })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
+    });
+
+    test("400: Rejects based on a invalid request body (wrong value type)", () => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({
+            inc_votes: "Hello" 
+        })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
+    });
 })
