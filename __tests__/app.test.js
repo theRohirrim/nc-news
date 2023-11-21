@@ -262,6 +262,24 @@ describe("GET /api/articles", () => {
             })
         })
     })
+
+    test("200: Valid query but no returned results", () => {
+        return request(app)
+          .get("/api/articles?topic=paper")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles.length).toBe(0);
+        });
+    });
+
+    test("400: Invalid topic query", () => {
+        return request(app)
+        .get("/api/articles?topic=cheese")
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe("Invalid topic query");
+        });
+    });
 });
 
 describe("POST: /api/articles/:article_id/comments", () => {
