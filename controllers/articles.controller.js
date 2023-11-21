@@ -1,5 +1,5 @@
 const { checkExists } = require("../db/seeds/utils");
-const { selectAllArticles, selectArticleById, insertCommentByArticleId, selectCommentsByArticleId } = require("../models/articles.model")
+const { selectAllArticles, selectArticleById, insertCommentByArticleId, selectCommentsByArticleId, alterArticleById } = require("../models/articles.model")
 
 exports.getArticleById = (req, res, next) => {
     const {article_id} = req.params;
@@ -39,6 +39,19 @@ exports.postCommentByArticleId = (req, res, next) => {
     })
     .then(({ rows }) => {
         res.status(201).send({ comment: rows[0] });
+    })
+    .catch(next)
+}
+
+exports.patchArticleById = (req, res, next) => {
+    const {article_id} = req.params;
+    const {inc_votes} = req.body
+    return checkExists('articles', 'article_id', article_id)
+    .then(() => {
+        return alterArticleById(article_id, inc_votes)
+    })
+    .then(({rows}) => {
+        res.status(200).send({article: rows[0]})
     })
     .catch(next)
 }
