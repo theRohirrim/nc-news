@@ -1,5 +1,5 @@
 const { checkExists } = require("../db/seeds/utils");
-const { selectTopics, selectArticleById, selectEndpoints, selectCommentsByArticleId } = require("../models/topics.model")
+const { selectTopics, selectArticleById, selectEndpoints, selectCommentsByArticleId, selectAllArticles } = require("../models/topics.model")
 
 exports.getTopics = (req, res, next) => {
     return selectTopics()
@@ -36,4 +36,12 @@ exports.getCommentsByArticleId = (req, res, next) => {
         res.status(200).send({comments})
     })
     .catch(next)
+}
+
+exports.getArticles = (req, res, next) => {
+    return selectAllArticles()
+    .then((articles) => {
+        res.status(200).send({articles})
+    })
+    .catch(next);
 }
