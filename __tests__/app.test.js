@@ -244,6 +244,24 @@ describe("GET /api/articles", () => {
               });
         })
     })
+
+    test("200: User can filter articles by topic", () => {
+        return request(app)
+          .get("/api/articles?topic=cats")
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles[0]).toMatchObject({
+                article_id: 5,
+                title: "UNCOVERED: catspiracy to bring down democracy",
+                author: "rogersop",
+                topic: "cats",
+                created_at: expect.any(String),
+                votes: 0,
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                comment_count: "2",
+            })
+        })
+    })
 });
 
 describe("POST: /api/articles/:article_id/comments", () => {

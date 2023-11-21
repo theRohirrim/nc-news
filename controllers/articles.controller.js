@@ -23,7 +23,8 @@ exports.getCommentsByArticleId = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    return selectAllArticles()
+    const query = req.query;
+    return selectAllArticles(query)
     .then((articles) => {
         res.status(200).send({articles})
     })
