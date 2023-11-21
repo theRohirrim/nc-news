@@ -297,7 +297,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
     });
 })
 
-describe.only("GET /api/users", () => {
+describe("GET /api/users", () => {
     test("200: Returns a list of all users, with correct number of users and properties", () => {
         return request(app)
         .get("/api/users")
