@@ -275,6 +275,9 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
     });
 
     test("400: Rejects based on missing NOT NULL key (username)", () => {
@@ -284,6 +287,9 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
     });
 
     test("404: Rejects based on a valid but non existing article_id)", () => {
@@ -294,6 +300,9 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('resource not found');
+        })
     });
 })
 
@@ -311,7 +320,6 @@ describe("DELETE /api/comments/:comment_id", () => {
                 votes: 16,
                 created_at: "2020-04-06T12:17:00.000Z"
             })
-        })
-        
+        })   
     })
 })
