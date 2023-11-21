@@ -187,7 +187,7 @@ describe("GET /api/articles", () => {
     })
 });
 
-describe.only("POST: /api/articles/:article_id/comments", () => {
+describe("POST: /api/articles/:article_id/comments", () => {
     test("201: Posts a new comment successfully with correct properties and values", () => {
         return request(app)
         .post("/api/articles/1/comments")
@@ -227,13 +227,13 @@ describe.only("POST: /api/articles/:article_id/comments", () => {
         .expect(400)
     });
 
-    // test("404: Rejects based on a valid but non existing article_id)", () => {
-    //     return request(app)
-    //     .post("/api/articles/5555/comments")
-    //     .send({
-    //         username: "rogersop",
-    //         body: "I think it could have been worse"
-    //     })
-    //     .expect(404)
-    // });
+    test("404: Rejects based on a valid but non existing article_id)", () => {
+        return request(app)
+        .post("/api/articles/5555/comments")
+        .send({
+            username: "rogersop",
+            body: "I think it could have been worse"
+        })
+        .expect(404)
+    });
 })

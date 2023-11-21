@@ -1,3 +1,4 @@
+const { checkExists } = require("../db/seeds/utils");
 const { selectTopics, selectEndpoints, selectAllArticles, selectArticleById, insertCommentByArticleId } = require("../models/topics.model")
 
 exports.getTopics = (req, res, next) => {
@@ -36,9 +37,12 @@ exports.getArticles = (req, res, next) => {
 exports.postCommentByArticleId = (req, res, next) => {
     const {article_id} = req.params;
     const {body, username} = req.body
-    return insertCommentByArticleId(article_id, body, username)
+    return checkExists('articles', 'article_id', article_id)
+    .then(() => {
+        return insertCommentByArticleId(article_id, body, username)
+    })
     .then(({ rows }) => {
         res.status(201).send({ comment: rows[0] });
-      })
-      .catch(next);
+    })
+    .catch(next)
 }
