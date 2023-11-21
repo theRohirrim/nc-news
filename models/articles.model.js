@@ -22,15 +22,25 @@ exports.selectCommentsByArticleId = (article_id) => {
     })
 }
 
-exports.selectAllArticles = () => {
-    return db.query(`SELECT article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url, COUNT(*) AS comment_count
+exports.selectAllArticles = (query) => {
+    const { topic } = query;
+
+    if (topic && !["coding", "football", "cooking", "mitch", "cats", "paper"].includes(topic)) {
+        return Promise.reject({ status: 400, msg: "Invalid topic query" });
+    }
+
+    let queryString = `SELECT article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url, COUNT(*) AS comment_count
     FROM articles
-    LEFT JOIN comments USING (article_id)
-    GROUP BY article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url
-    ORDER BY created_at DESC;`)
-    .then(({rows}) => {
-        return rows
-    })
+    LEFT JOIN comments USING (article_id)`
+
+    if (topic) queryString += `WHERE topic= '${topic}' `;
+
+    const queryEnd = `GROUP BY article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url
+    ORDER BY created_at DESC;`
+
+    return db.query(queryString + queryEnd).then(({ rows }) => {
+        return rows;
+  });
 }
 
 exports.insertCommentByArticleId = (article_id, body, username) => {
