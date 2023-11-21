@@ -296,3 +296,44 @@ describe("POST: /api/articles/:article_id/comments", () => {
         .expect(404)
     });
 })
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("200: Successful patch will return the article", () => {
+        return request(app)
+        .patch('/api/articles/1')
+        .send({
+            inc_votes: 5
+        })
+        .expect(200)
+        .then((res) => {
+            expect(res.body.article).toMatchObject({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: convertTimestampToDate(1594329060000),
+                votes: 105,
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+            })
+        })
+    })
+
+    test("400: Rejects based on a bad request (article_id)", () => {
+        return request(app)
+        .patch("/api/articles/not_article")
+        .send({
+            inc_votes: 5
+        })
+        .expect(400)
+    });
+
+    test("404: Rejects based on a valid but non existing article_id)", () => {
+        return request(app)
+        .patch("/api/articles/5555")
+        .send({
+            inc_votes: 5
+        })
+        .expect(404)
+    });
+})
