@@ -25,6 +25,17 @@ exports.selectEndpoints = () => {
     })
 }
 
+exports.selectCommentsByArticleId = (article_id) => {
+    return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, article_id
+                     FROM comments 
+                     JOIN articles USING (article_id)
+                     WHERE article_id = $1
+                     ORDER BY comments.created_at DESC;`, [article_id])
+    .then(({rows}) => {
+        return rows
+    })
+}
+
 exports.selectAllArticles = () => {
     return db.query(`SELECT article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url, COUNT(*) AS comment_count
                      FROM articles
