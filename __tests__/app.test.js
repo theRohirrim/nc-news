@@ -142,6 +142,65 @@ describe("GET /api", () => {
     });
 })
 
+describe("GET /api/articles/:article_id/comments", () => {
+    test("200: Comments should be an array of correct length and have correct properties", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((res) => {
+            expect(res.body.comments.length).toBe(11)
+            res.body.comments.forEach((comment) => {
+                expect(comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    article_id: expect.any(Number),
+                })
+            })
+        });
+    })
+
+    test("200: Comments should be ordered by most recent comments first", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((res) => {
+            expect(res.body.comments).toBeSortedBy('created_at', {
+                descending: true,
+              });
+        });
+    })
+
+    test("200: No comments present, return an empty array", () => {
+        return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then((res) => {
+            expect(res.body.comments).toEqual([]);
+        });
+    })
+
+    test('404: sends an appropriate status and error message when given a valid but non-existent id', () => {
+        return request(app)
+          .get('/api/articles/45012/comments')
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe('resource not found');
+        });
+    });
+
+    test('400: sends an appropriate status and error message when given an invalid id', () => {
+        return request(app)
+          .get('/api/articles/not-an-article')
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        });
+    });
+})
+
 describe("GET /api/articles", () => {
     test("200: Returned array has the right number of items", () => {
         return request(app)
