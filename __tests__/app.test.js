@@ -275,6 +275,9 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
     });
 
     test("400: Rejects based on missing NOT NULL key (username)", () => {
@@ -284,6 +287,9 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
     });
 
     test("404: Rejects based on a valid but non existing article_id)", () => {
@@ -294,7 +300,36 @@ describe("POST: /api/articles/:article_id/comments", () => {
             body: "I think it could have been worse"
         })
         .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('resource not found');
+        })
     });
+})
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204: Successfully deletes comment and returns no content", () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+    })
+
+    test("400: Rejects based on an invalid comment_id", () => {
+        return request(app)
+        .delete('/api/comments/string')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad request')
+        })   
+    })
+
+    test("404: Rejects based on a valid but non existing comment_id", () => {
+        return request(app)
+        .delete('/api/comments/9999')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('resource not found')
+        })   
+    })
 })
 
 describe("PATCH /api/articles/:article_id", () => {
