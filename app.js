@@ -2,6 +2,7 @@ const express = require("express");
 const { getTopics, getEndpoints } = require("./controllers/topics.controller");
 const { handlePsqlError, handleCustomError, handleServerError } = require("./errors");
 const { getArticles, getArticleById, getCommentsByArticleId, postCommentByArticleId, patchArticleById } = require("./controllers/articles.controller");
+const { getAllUsers } = require("./controllers/users.controller");
 const { deleteCommentById } = require("./controllers/comments.controller");
 
 const app = express();
@@ -22,6 +23,8 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 app.delete("/api/comments/:comment_id", deleteCommentById)
 
 app.patch("/api/articles/:article_id", patchArticleById)
+
+app.get("/api/users", getAllUsers)
 
 app.use(handlePsqlError);
 app.use(handleCustomError);
