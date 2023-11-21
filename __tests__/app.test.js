@@ -296,3 +296,21 @@ describe("POST: /api/articles/:article_id/comments", () => {
         .expect(404)
     });
 })
+
+describe.only("GET /api/users", () => {
+    test("200: Returns a list of all users, with correct number of users and properties", () => {
+        return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((res) => {
+            expect(res.body.users.length).toBe(4)
+            res.body.users.forEach((user) => {
+                expect(user).toMatchObject({
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    avatar_url: expect.any(String)
+                })
+            })
+        })
+    })
+})

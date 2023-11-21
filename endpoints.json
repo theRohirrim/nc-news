@@ -72,5 +72,18 @@
         }
       ]
     }
+  },
+  "GET /api/users": {
+    "description": "returns a list of all users",
+    "queries": [],
+    "exampleResponse": {
+      "article":[
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }
+      ]
+    }
   }
 }
