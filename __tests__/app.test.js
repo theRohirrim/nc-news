@@ -395,6 +395,30 @@ describe("GET /api/users", () => {
     })
 })
 
+describe("GET /api/users/:username", () => {
+    test("200: Returned results keys and values are correct", () => {
+        return request(app)
+            .get("/api/users/lurker")
+            .expect(200)
+            .then((res) => {
+                expect(res.body.user).toMatchObject({
+                    username: 'lurker',
+                    avatar_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                    name: 'do_nothing'
+            })
+        });
+    });
+
+    test('404: sends an appropriate status and error message when given a valid but non-existent username', () => {
+        return request(app)
+          .get('/api/users/peter_jones')
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe('user does not exist');
+        });
+    });
+})
+
 describe("DELETE /api/comments/:comment_id", () => {
     test("204: Successfully deletes comment and returns no content", () => {
         return request(app)
