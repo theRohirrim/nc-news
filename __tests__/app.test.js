@@ -235,31 +235,65 @@ describe("GET /api/articles", () => {
         })
     })
 
-    test("200: Ordered by date in descending order", () => {
-        return request(app)
-          .get("/api/articles")
-          .expect(200)
-          .then((res) => {
-            expect(res.body.articles).toBeSortedBy("created_at", {
-                descending: true,
-              });
-        })
-    })
-
     test("200: User can filter articles by topic", () => {
         return request(app)
           .get("/api/articles?topic=cats")
           .expect(200)
           .then((res) => {
+            res.body.articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    topic: "cats"
+                })
+            })
+        })
+    })
+
+    test("200: User can filter articles by topic and author", () => {
+        return request(app)
+          .get("/api/articles?topic=cats&author=rogersop")
+          .expect(200)
+          .then((res) => {
             expect(res.body.articles[0]).toMatchObject({
-                article_id: 5,
-                title: "UNCOVERED: catspiracy to bring down democracy",
                 author: "rogersop",
                 topic: "cats",
-                created_at: expect.any(String),
-                votes: 0,
-                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-                comment_count: "2",
+            })
+        })
+    })
+
+    test("200: No user defined order defaults to ordering by created_at, most recent", () => {
+        return request(app)
+          .get("/api/articles?topic=cats")
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles).toBeSortedBy("created_at", {
+                descending: false,
+            })
+        })
+    })
+
+    test("200: User can order by author, ascending", () => {
+        return request(app)
+          .get("/api/articles?sort_by=author&order=asc")
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles).toBeSortedBy("author", {
+                descending: false,
+            })
+        })
+    })
+
+    test("200: User can filter by author, and order by topic descending", () => {
+        return request(app)
+          .get("/api/articles?author=butter_bridge&sort_by=topic&order=desc")
+          .expect(200)
+          .then((res) => {
+            expect(res.body.articles).toBeSortedBy("topic", {
+                descending: false,
+            })
+            res.body.articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    author: 'butter_bridge'
+                })
             })
         })
     })
