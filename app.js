@@ -13,8 +13,6 @@ const apiRouter = require('./routes/api-router');
 
 app.use('/api', apiRouter);
 
-// app.get("/api/users", getAllUsers)
-
 app.use(handlePsqlError);
 app.use(handleCustomError);
 app.use(handleServerError);
