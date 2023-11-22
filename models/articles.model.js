@@ -23,7 +23,7 @@ exports.selectCommentsByArticleId = (article_id) => {
 }
 
 exports.selectAllArticles = (query) => {
-    const { topic } = query;
+    const { author, topic, sort_by, order } = query;
 
     if (topic && !["coding", "football", "cooking", "mitch", "cats", "paper"].includes(topic)) {
         return Promise.reject({ status: 400, msg: "Invalid topic query" });
@@ -33,12 +33,26 @@ exports.selectAllArticles = (query) => {
     FROM articles
     LEFT JOIN comments USING (article_id)`
 
-    if (topic) queryString += `WHERE topic= '${topic}' `;
+    let queryJoins = []
 
-    const queryEnd = `GROUP BY article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url
-    ORDER BY created_at DESC;`
+    if (topic) queryJoins.push(` topic = '${topic}' `);
 
-    return db.query(queryString + queryEnd).then(({ rows }) => {
+    if (author) queryJoins.push(` articles.author = '${author}' `);
+
+    if (topic || author) queryString += ' WHERE';
+
+    const queryGrouping = `GROUP BY article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url`
+
+    let queryEnd
+    if (sort_by && order) {
+        queryEnd = ` ORDER BY ${sort_by} ${order};`
+    } else {
+        queryEnd = ` ORDER BY created_at DESC;`
+    }
+
+    const fullQuery = queryString + queryJoins.join('AND') + queryGrouping + queryEnd;
+
+    return db.query(fullQuery).then(({ rows }) => {
         return rows;
   });
 }
