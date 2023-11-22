@@ -467,7 +467,7 @@ describe("PATCH /api/articles/:article_id", () => {
         })
     })
 
-    test("200: Successful patch will return the article", () => {
+    test("200: Successfully decremented the article", () => {
         return request(app)
         .patch('/api/articles/1')
         .send({
@@ -527,6 +527,89 @@ describe("PATCH /api/articles/:article_id", () => {
     test("400: Rejects based on a invalid request body (wrong value type)", () => {
         return request(app)
         .patch("/api/articles/1")
+        .send({
+            inc_votes: "Hello" 
+        })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
+    });
+})
+
+describe("PATCH /api/comments/:comment_id", () => {
+    test("200: Successful patch will return the comment", () => {
+        return request(app)
+        .patch('/api/comments/1')
+        .send({
+            inc_votes: 5
+        })
+        .expect(200)
+        .then((res) => {
+            expect(res.body.comment).toMatchObject({
+                comment_id: 1,
+                body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                author: "butter_bridge",
+                article_id: 9,
+                created_at: expect.any(String),
+                votes: 21
+            })
+        })
+    })
+
+    test("200: Successfully decrement the comment votes", () => {
+        return request(app)
+        .patch('/api/comments/1')
+        .send({
+            inc_votes: -50
+        })
+        .expect(200)
+        .then((res) => {
+            expect(res.body.comment).toMatchObject({
+                votes: -34
+            })
+        })
+    })
+
+    test("400: Rejects based on a bad request (comment_id)", () => {
+        return request(app)
+        .patch("/api/comments/not_comment")
+        .send({
+            inc_votes: 5
+        })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
+    });
+
+    test("404: Rejects based on a valid but non existing article_id", () => {
+        return request(app)
+        .patch("/api/comments/5555")
+        .send({
+            inc_votes: 5
+        })
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('resource not found');
+        })
+    });
+
+    test("400: Rejects based on a invalid request body (wrong property)", () => {
+        return request(app)
+        .patch("/api/comments/1")
+        .send({
+            in_vot: 5 
+        })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
+    });
+
+    test("400: Rejects based on a invalid request body (wrong value type)", () => {
+        return request(app)
+        .patch("/api/comments/1")
         .send({
             inc_votes: "Hello" 
         })
