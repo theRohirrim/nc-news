@@ -73,11 +73,3 @@ exports.alterArticleById = (article_id, votes) => {
     SET votes = votes + $1
     WHERE article_id = $2 RETURNING *;`, [votes, article_id])
 }
-
-/*
-SELECT articles.*, COUNT(*) AS comment_count 
-    FROM articles 
-    LEFT JOIN comments USING (article_id)
-    WHERE article_id = 1
-    GROUP BY article_id, title, topic, articles.author, articles.body, articles.created_at, articles.votes, article_img_url;
-*/
