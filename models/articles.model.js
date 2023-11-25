@@ -75,7 +75,6 @@ exports.alterArticleById = (article_id, votes) => {
 }
 
 exports.insertArticle = (article) => {
-    console.log(article)
     let {author, title, body, topic, article_img_url} = article
     let valuesArr = [author, title, body, topic]
 
