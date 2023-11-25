@@ -619,3 +619,69 @@ describe("PATCH /api/comments/:comment_id", () => {
         })
     });
 })
+
+describe("POST: /api/articles", () => {
+    test("201: Posts a new article successfully with correct properties and values", () => {
+        return request(app)
+        .post("/api/articles/")
+        .send({
+            author: "butter_bridge",
+            title: "test article",
+            body: "this article is about cats",
+            topic: "cats",
+            article_img_url: 'https://placeholder.jpg'
+        })
+        .expect(201)
+        .then((response) => {
+            expect(response.body.article).toMatchObject({
+                author: "butter_bridge",
+                title: "test article",
+                body: "this article is about cats",
+                topic: "cats",
+                article_img_url: 'https://placeholder.jpg',
+                article_id: 14,
+                votes: 0,
+                created_at: expect.any(String)
+            });
+        }); 
+    });
+
+    test("201: Posts a new article successfully with article_img_url defaulted", () => {
+        return request(app)
+        .post("/api/articles")
+        .send({
+            author: "butter_bridge",
+            title: "test article",
+            body: "this article is about cats",
+            topic: "cats"
+        })
+        .expect(201)
+        .then((response) => {
+            expect(response.body.article).toMatchObject({
+                author: "butter_bridge",
+                title: "test article",
+                body: "this article is about cats",
+                topic: "cats",
+                article_img_url: 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700',
+                article_id: 14,
+                votes: 0,
+                created_at: expect.any(String)
+            });
+        }); 
+    });
+
+    test("400: Rejects based on missing NOT NULL key (title)", () => {
+        return request(app)
+        .post("/api/articles")
+        .send({
+            author: "butter_bridge",
+            body: "this article is about cats",
+            topic: "cats",
+            article_img_url: 'https://placeholder.jpg'
+        })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
+    });
+})

@@ -73,3 +73,22 @@ exports.alterArticleById = (article_id, votes) => {
     SET votes = votes + $1
     WHERE article_id = $2 RETURNING *;`, [votes, article_id])
 }
+
+exports.insertArticle = (article) => {
+    let {author, title, body, topic, article_img_url} = article
+    let valuesArr = [author, title, body, topic]
+
+    let valuesStr
+    if (article_img_url) {
+        valuesStr = `(author, title, body, topic, article_img_url) 
+        VALUES ($1, $2, $3, $4, $5)`
+        valuesArr.push(article_img_url)
+    } else {
+        valuesStr = `(author, title, body, topic) 
+        VALUES ($1, $2, $3, $4)`
+    }
+
+    const fullQuery = `INSERT INTO articles ${valuesStr} RETURNING *`
+    
+    return db.query(fullQuery, valuesArr)
+}
