@@ -114,3 +114,9 @@ exports.insertCommentByArticleId = (article_id, body, username) => {
     VALUES ($1, $2, $3)
     RETURNING *;`, [body, article_id, username])
 }
+
+exports.removeArticleById = (article_id) => {
+    return db.query(`DELETE 
+    FROM articles 
+    WHERE article_id = $1;`, [article_id])
+}

@@ -479,6 +479,32 @@ describe("PATCH /api/articles/:article_id", () => {
     });
 })
 
+describe("DELETE /api/articles/:article_id", () => {
+    test("204: Successfully deletes article and returns no content", () => {
+        return request(app)
+        .delete('/api/articles/1')
+        .expect(204)
+    })
+
+    test("400: Rejects based on an invalid article_id", () => {
+        return request(app)
+        .delete('/api/articles/string')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad request')
+        })   
+    })
+
+    test("404: Rejects based on a valid but non existing article_id", () => {
+        return request(app)
+        .delete('/api/articles/9999')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('resource not found')
+        })   
+    })
+})
+
 
 describe("GET /api/articles/:article_id/comments", () => {
     test("200: Comments should be an array of correct length (default 10) and have correct properties", () => {

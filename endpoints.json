@@ -85,6 +85,11 @@
       ]
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "delete an article based on its article_id",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "gets all comments for an article by the article_id, pagination available via queries with limit and pages being p",
     "queries": ["limit", "p"],
@@ -158,17 +163,6 @@
   "DELETE /api/comments/:comment_id": {
     "description": "delete a comment based on its comment_id",
     "queries": [],
-    "exampleResponse": {
-      "article":[
-        {
-          "comment_id": 5,
-          "votes": 0,
-          "created_at": "2020-11-03T21:00:00.000Z",
-          "author": "icellusedkars",
-          "body": "I hate streaming noses",
-          "article_id": 1
-        }
-      ]
-    }
+    "exampleResponse": {}
   }
 }
