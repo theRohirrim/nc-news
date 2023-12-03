@@ -9,6 +9,13 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "adds a new topic to the categories of topics",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "pottery", "description": "cups, plates, and bowls" }]
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles, filtered by author or topic. You can sort by columns, and limit results using limits and select page using p",
     "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
@@ -79,8 +86,8 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "gets all comments for an article by the article_id",
-    "queries": [],
+    "description": "gets all comments for an article by the article_id, pagination available via queries with limit and pages being p",
+    "queries": ["limit", "p"],
     "exampleResponse": {
       "article":[
         {

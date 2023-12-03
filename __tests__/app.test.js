@@ -90,6 +90,36 @@ describe("GET /api/topics", () => {
     });
 })
 
+describe("POST: /api/topics", () => {
+    test("201: Posts a new topic successfully with correct properties and values", () => {
+        return request(app)
+        .post("/api/topics")
+        .send({
+            slug:"pottery",
+            description:"cups, plates, and bowls"
+        })
+        .expect(201)
+        .then((response) => {
+            expect(response.body.topic).toMatchObject({
+                slug:"pottery",
+                description:"cups, plates, and bowls"
+            });
+        }); 
+    });
+
+    test("400: Rejects based on missing NOT NULL key (slug)", () => {
+        return request(app)
+        .post("/api/topics")
+        .send({
+            description: "random description"
+        })
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request');
+        })
+    });
+})
+
 describe("GET /api/articles", () => {
     test("200: Returned array has the right number of items, default 10", () => {
         return request(app)
