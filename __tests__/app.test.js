@@ -90,14 +90,14 @@ describe("GET /api/topics", () => {
     });
 })
 
-describe("GET /api/articles", () => {
-    test("200: Returned array has the right number of items", () => {
+describe.only("GET /api/articles", () => {
+    test("200: Returned array has the right number of items, default 10", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)
           .then((res) => {
             expect(Array.isArray(res.body.articles)).toBe(true);
-            expect(res.body.articles.length).toBe(13)
+            expect(res.body.articles.length).toBe(10)
         });
     });
 
@@ -194,6 +194,39 @@ describe("GET /api/articles", () => {
             expect(response.body.articles.length).toBe(0);
         });
     });
+
+    test("200: Sets limit and returned page using queries", () => {
+        return request(app)
+        .get("/api/articles?sort_by=article_id&order=asc&limit=5&p=2")
+        .expect(200)
+        .then((response) => {
+            const articles = response.body.articles
+            expect(articles.length).toBe(5);
+
+            for (let i = 6; i < response.body.articles.length; i++) {
+                expect(articles.article_id).toBe(i)
+            }
+        })
+    })
+
+    test("200: Selected page has no results", () => {
+        return request(app)
+        .get("/api/articles?limit=20&p=3")
+        .expect(200)
+        .then((response) => {
+            const articles = response.body.articles
+            expect(articles.length).toBe(0);
+        })
+    })
+
+    test("400: Invalid limit query", () => {
+        return request(app)
+        .get("/api/articles?limit=cheese")
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe("Bad request");
+        });
+    })
 
     test("400: Invalid topic query", () => {
         return request(app)

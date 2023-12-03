@@ -2,7 +2,7 @@ const db = require("../db/connection");
 const fs = require("fs/promises")
 
 exports.selectAllArticles = (query) => {
-    const { author, topic, sort_by, order } = query;
+    const { author, topic, sort_by, order, limit, p } = query;
 
     if (topic && !["coding", "football", "cooking", "mitch", "cats", "paper"].includes(topic)) {
         return Promise.reject({ status: 400, msg: "Invalid topic query" });
@@ -18,18 +18,30 @@ exports.selectAllArticles = (query) => {
 
     if (author) queryJoins.push(` articles.author = '${author}' `);
 
-    if (topic || author) queryString += ' WHERE';
+    if (topic || author) queryString += ` WHERE ${queryJoins.join('AND')}`;
 
-    const queryGrouping = `GROUP BY article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url`
+    queryString += `GROUP BY article_id, title, articles.author, topic, articles.created_at, articles.votes, article_img_url`
 
-    let queryEnd
+    let querySort
     if (sort_by && order) {
-        queryEnd = ` ORDER BY ${sort_by} ${order};`
+        querySort = ` ORDER BY ${sort_by} ${order}`
     } else {
-        queryEnd = ` ORDER BY created_at DESC;`
+        querySort = ` ORDER BY created_at DESC`
     }
 
-    const fullQuery = queryString + queryJoins.join('AND') + queryGrouping + queryEnd;
+    queryString += querySort
+
+    const limitValue = limit ? limit : 10;
+    queryString += ` LIMIT ${limitValue}`
+
+    if (p) {
+        const pageStr = ` OFFSET ${limitValue * (p - 1)}`
+        queryString += pageStr
+    }
+
+    const fullQuery = queryString + ';';
+
+    console.log(fullQuery)
 
     return db.query(fullQuery).then(({ rows }) => {
         return rows;
