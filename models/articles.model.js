@@ -85,12 +85,24 @@ exports.alterArticleById = (article_id, votes) => {
     WHERE article_id = $2 RETURNING *;`, [votes, article_id])
 }
 
-exports.selectCommentsByArticleId = (article_id) => {
-    return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, article_id
+exports.selectCommentsByArticleId = (article_id, query) => {
+    const {limit, p} = query
+
+    let queryString = `SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body, article_id
     FROM comments 
     JOIN articles USING (article_id)
     WHERE article_id = $1
-    ORDER BY comments.created_at DESC;`, [article_id])
+    ORDER BY comments.created_at DESC`
+
+    const limitValue = limit ? limit : 10;
+    queryString += ` LIMIT ${limitValue}`
+
+    if (p) {
+        const pageStr = ` OFFSET ${limitValue * (p - 1)}`
+        queryString += pageStr
+    }
+
+    return db.query(`${queryString};`, [article_id])
     .then(({rows}) => {
         return rows
     })

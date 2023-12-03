@@ -41,10 +41,11 @@ exports.patchArticleById = (req, res, next) => {
 }
 
 exports.getCommentsByArticleId = (req, res, next) => {
+    const query = req.query
     const {article_id} = req.params;
     return checkExists('articles', 'article_id', article_id)
     .then(() => {
-        return selectCommentsByArticleId(article_id) 
+        return selectCommentsByArticleId(article_id, query) 
     })
     .then((comments) => {
         res.status(200).send({comments})

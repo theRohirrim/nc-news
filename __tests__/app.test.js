@@ -451,12 +451,12 @@ describe("PATCH /api/articles/:article_id", () => {
 
 
 describe("GET /api/articles/:article_id/comments", () => {
-    test("200: Comments should be an array of correct length and have correct properties", () => {
+    test("200: Comments should be an array of correct length (default 10) and have correct properties", () => {
         return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
         .then((res) => {
-            expect(res.body.comments.length).toBe(11)
+            expect(res.body.comments.length).toBe(10)
             res.body.comments.forEach((comment) => {
                 expect(comment).toMatchObject({
                     comment_id: expect.any(Number),
@@ -487,6 +487,40 @@ describe("GET /api/articles/:article_id/comments", () => {
         .expect(200)
         .then((res) => {
             expect(res.body.comments).toEqual([]);
+        });
+    })
+
+    test("200: Sets limit and returned page using queries", () => {
+        return request(app)
+        .get("/api/articles/1/comments?limit=5&p=2")
+        .expect(200)
+        .then((response) => {
+            const comments = response.body.comments
+            expect(comments.length).toBe(5);
+
+            const article_ids = [8,6,12,3,4]
+            for (let i = 0; i < comments.length; i++) {
+                expect(comments[i].comment_id).toBe(article_ids[i])
+            }
+        })
+    })
+
+    test("200: Selected page has no results", () => {
+        return request(app)
+        .get("/api/articles/1/comments?limit=20&p=3")
+        .expect(200)
+        .then((response) => {
+            const comments = response.body.comments
+            expect(comments.length).toBe(0);
+        })
+    })
+
+    test("400: Invalid limit query", () => {
+        return request(app)
+        .get("/api/articles/1/comments?limit=cheese")
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe("Bad request");
         });
     })
 
