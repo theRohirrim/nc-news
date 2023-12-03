@@ -41,8 +41,6 @@ exports.selectAllArticles = (query) => {
 
     const fullQuery = queryString + ';';
 
-    console.log(fullQuery)
-
     return db.query(fullQuery).then(({ rows }) => {
         return rows;
   });

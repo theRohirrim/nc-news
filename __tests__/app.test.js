@@ -90,7 +90,7 @@ describe("GET /api/topics", () => {
     });
 })
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
     test("200: Returned array has the right number of items, default 10", () => {
         return request(app)
           .get("/api/articles")
